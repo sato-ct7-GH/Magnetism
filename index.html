@@ -462,7 +462,7 @@ const SECTIONS = [
   {
     id: 5,
     label: "基本⑤",
-    subtitle: "交流・電磁波・半導体",
+    subtitle: "交流",
     available: true,
     questions: [
       { id: 71, text: "コイルを一様な磁場（磁界）中で一定の角速度で回転させると、コイルに生じる起電力はどのように変化するか。",
@@ -548,7 +548,15 @@ const SECTIONS = [
       { id: 101, text: "1次コイルの巻数を \\(N_1\\)、加える電圧を \\(V_1\\)、2次コイルの巻数を \\(N_2\\)、発生する電圧を \\(V_2\\) とするとき、\\(V_1:V_2\\) を表す比はどれか。",
         choices: ["\\(N_1:N_2\\)", "\\(N_2:N_1\\)", "\\(N_1^2:N_2^2\\)", "\\(N_2^2:N_1^2\\)"] },
       { id: 102, text: "電力損失がない場合、1次コイルの巻数を \\(N_1\\)、2次コイルの巻数を \\(N_2\\)、1次コイルの電流を \\(I_1\\)、2次コイルの電流を \\(I_2\\) とするとき、\\(I_1:I_2\\) を表す比はどれか。",
-        choices: ["\\(N_2:N_1\\)", "\\(N_1:N_2\\)", "\\(N_1^2:N_2^2\\)", "\\(N_2^2:N_1^2\\)"] },
+        choices: ["\\(N_2:N_1\\)", "\\(N_1:N_2\\)", "\\(N_1^2:N_2^2\\)", "\\(N_2^2:N_1^2\\)"] }
+    ]
+  },
+  {
+    id: 6,
+    label: "基本⑥",
+    subtitle: "電磁波・半導体",
+    available: true,
+    questions: [
       { id: 103, text: "電磁波の存在を理論的に予言したのは誰か。",
         choices: ["マクスウェル", "ヘルツ", "アインシュタイン", "ボーア"] },
       { id: 104, text: "電磁波を実験的に発見したのは誰か。",
@@ -723,7 +731,7 @@ const EXPLANATIONS = {
 // 状態管理
 // ============================================================
 let curSec    = 1;
-let curMode   = 'intro';   // 'intro' | 'study' | 'submit'
+let curMode   = 'study';   // 'intro' | 'study' | 'submit'
 let orderMode = 'seq';     // 自習モードの出題順　'seq'=学習順  'rand'=ランダム
 
 const im = {          // 初学モード状態
@@ -1274,7 +1282,7 @@ async function trySend(btn, attempt) {
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
   buildTabs();
-  document.getElementById('modeIntro').classList.add('active');
+  document.getElementById('modeStudy').classList.add('active');
   render();
 });
 </script>
