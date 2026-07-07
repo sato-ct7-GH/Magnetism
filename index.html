@@ -26,12 +26,15 @@
 
     /* ===== セクションタブ ===== */
     .tabs{
-      display:flex;background:#1e3a8a;
+      background:#1e3a8a;
+    }
+    .tabs-inner{
+      display:flex;max-width:600px;margin:0 auto;
       overflow-x:auto;-webkit-overflow-scrolling:touch;
     }
     .tab{
-      flex:1;min-width:60px;padding:10px 4px;text-align:center;
-      font-size:13px;font-weight:600;color:rgba(255,255,255,.5);
+      flex:1;min-width:50px;padding:10px 2px;text-align:center;
+      font-size:12px;font-weight:600;color:rgba(255,255,255,.5);
       cursor:pointer;border-bottom:3px solid transparent;
       transition:all .2s;user-select:none;white-space:nowrap;
     }
@@ -217,7 +220,7 @@
   <div class="hdr-sub" id="hdrSub"></div>
 </header>
 
-<div class="tabs" id="tabs"></div>
+<div class="tabs"><div class="tabs-inner" id="tabs"></div></div>
 
 <div class="main">
   <div class="mode-row">
