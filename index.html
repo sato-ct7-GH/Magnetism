@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>磁気・電磁誘導の基本知識</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN','Yu Gothic',sans-serif;
+      background:#edf2f7;color:#1a202c;min-height:100vh;
+    }
+
+    /* ===== ヘッダー ===== */
+    header{
+      background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);
+      color:#fff;padding:14px 18px 12px;text-align:center;
+      box-shadow:0 2px 8px rgba(0,0,0,.25);
+    }
+    .hdr-school{font-size:11px;opacity:.75;margin-bottom:4px;letter-spacing:.5px;}
+    .hdr-title{font-size:19px;font-weight:700;letter-spacing:.5px;}
+    .hdr-sub{font-size:12px;opacity:.8;margin-top:4px;min-height:1em;}
+
+    /* ===== セクションタブ ===== */
+    .tabs{
+      display:flex;background:#1e3a8a;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+    }
+    .tab{
+      flex:1;min-width:60px;padding:10px 4px;text-align:center;
+      font-size:13px;font-weight:600;color:rgba(255,255,255,.5);
+      cursor:pointer;border-bottom:3px solid transparent;
+      transition:all .2s;user-select:none;white-space:nowrap;
+    }
+    .tab.active{color:#fbbf24;border-bottom-color:#fbbf24;}
+    .tab.disabled{opacity:.3;cursor:not-allowed;}
+
+    /* ===== メイン ===== */
+    .main{max-width:600px;margin:0 auto;padding:14px 13px 70px;}
+
+    /* ===== モード切替 ===== */
+    .mode-row{
+      display:flex;background:#fff;border-radius:10px;
+      overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.1);margin-bottom:14px;
+    }
+    .mode-btn{
+      flex:1;padding:11px 6px;border:none;background:#fff;
+      color:#6b7280;font-size:12.5px;font-weight:500;
+      cursor:pointer;font-family:inherit;transition:all .2s;
+    }
+    .mode-btn.active{background:#2563eb;color:#fff;}
+
+    /* ===== 進捗・スコア ===== */
+    .prog-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+    .prog-bar{flex:1;height:5px;background:#cbd5e1;border-radius:3px;}
+    .prog-fill{height:100%;background:#2563eb;border-radius:3px;transition:width .35s ease;}
+    .prog-text{font-size:12px;color:#64748b;white-space:nowrap;}
+    .score-row{text-align:right;font-size:13px;color:#64748b;margin-bottom:12px;}
+
+    .q-card{
+      background:#fff;border-radius:12px;padding:18px 20px;
+      margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.09);
+      border-left:4px solid #2563eb;
+    }
+    .q-num{font-size:11px;font-weight:700;color:#2563eb;margin-bottom:7px;letter-spacing:.5px;}
+    .q-img{display:block;max-width:33%;height:auto;border-radius:8px;margin-bottom:12px;border:1px solid #e2e8f0;}
+    .q-text{font-size:15px;line-height:1.75;}
+
+    .choices{display:flex;flex-direction:column;gap:8px;margin-bottom:12px;}
+    .choice-btn{
+      width:100%;padding:12px 16px;background:#fff;
+      border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;
+      font-size:14px;text-align:left;color:#374151;
+      transition:all .15s;font-family:inherit;line-height:1.6;
+    }
+    .choice-btn:hover:not(:disabled){border-color:#93c5fd;background:#eff6ff;}
+    .choice-btn.correct{border-color:#34d399;background:#ecfdf5;color:#065f46;font-weight:600;}
+    .choice-btn.wrong{border-color:#f87171;background:#fef2f2;color:#991b1b;}
+    .choice-btn:disabled{cursor:default;}
+
+    .feedback{
+      padding:12px 16px;border-radius:8px;font-size:13px;
+      line-height:1.65;display:none;margin-bottom:12px;
+    }
+    .feedback.ok{display:block;background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46;}
+    .feedback.ng{display:block;background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;}
+    .fb-expl{display:inline-block;margin-top:6px;font-weight:400;color:#78350f;}
+
+    .next-btn{
+      width:100%;padding:13px;background:#2563eb;color:#fff;
+      border:none;border-radius:8px;font-size:15px;font-weight:600;
+      cursor:pointer;font-family:inherit;transition:background .2s;
+    }
+    .next-btn:hover{background:#1e3a8a;}
+
+    /* ===== 初学モード：解答・解説 ===== */
+    .intro-answer{
+      background:#ecfdf5;border:1px solid #6ee7b7;border-radius:10px;
+      padding:14px 18px;margin-bottom:14px;
+    }
+    .intro-answer-label{font-size:11px;font-weight:700;color:#059669;letter-spacing:.5px;margin-bottom:6px;}
+    .intro-answer-text{font-size:16px;font-weight:700;color:#065f46;margin-bottom:10px;line-height:1.6;}
+    .intro-expl{font-size:13.5px;line-height:1.75;color:#374151;border-top:1px dashed #a7f3d0;padding-top:10px;}
+    .intro-expl-icon{margin-right:4px;}
+
+    /* ===== 結果画面 ===== */
+    .result-card{
+      background:#fff;border-radius:16px;padding:40px 24px;
+      text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.1);
+    }
+    .result-emoji{font-size:56px;margin-bottom:14px;}
+    .result-score{font-size:56px;font-weight:800;color:#2563eb;line-height:1;}
+    .result-total{font-size:17px;color:#64748b;margin-bottom:6px;}
+    .result-pct{font-size:28px;font-weight:700;color:#374151;margin-bottom:28px;}
+    .retry-btn{
+      padding:12px 36px;background:#2563eb;color:#fff;border:none;
+      border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;
+    }
+    .retry-btn:hover{background:#1e3a8a;}
+    .result-actions{display:flex;flex-direction:column;gap:10px;}
+
+    /* ===== 送信モード ===== */
+    .name-card{
+      background:#fff;border-radius:12px;padding:16px 20px;
+      margin-bottom:13px;box-shadow:0 1px 4px rgba(0,0,0,.08);
+    }
+    .name-label{font-size:13px;font-weight:600;color:#374151;margin-bottom:8px;display:block;}
+    .name-input{
+      width:100%;padding:10px 14px;border:2px solid #e2e8f0;
+      border-radius:8px;font-size:15px;font-family:inherit;
+      outline:none;color:#1a202c;transition:border-color .2s;
+    }
+    .name-input:focus{border-color:#2563eb;}
+
+    .sub-result{
+      padding:16px;border-radius:10px;text-align:center;
+      margin-bottom:16px;font-size:14px;line-height:1.8;
+    }
+    .sub-result.ok{background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46;}
+    .sub-result.warn{background:#fffbeb;border:1px solid #fcd34d;color:#92400e;}
+
+    .sm-explanation{
+      display:flex;gap:10px;align-items:flex-start;
+      background:#fffbeb;border:1px solid #fcd34d;
+      border-radius:8px;padding:12px 14px;
+      font-size:13px;line-height:1.7;color:#78350f;
+      margin-bottom:12px;
+    }
+    .sm-expl-icon{font-size:18px;flex-shrink:0;margin-top:1px;}
+    .sm-final-card{
+      background:#fff;border-radius:16px;padding:36px 24px;
+      text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.1);
+    }
+    .sm-final-icon{font-size:52px;margin-bottom:12px;}
+    .sm-final-title{font-size:17px;font-weight:700;color:#1a202c;margin-bottom:6px;}
+    .sm-final-name{font-size:15px;color:#2563eb;font-weight:600;margin-bottom:20px;}
+    .sm-start-btn{
+      width:100%;padding:13px;background:#2563eb;color:#fff;border:none;
+      border-radius:8px;font-size:15px;font-weight:600;
+      cursor:pointer;font-family:inherit;margin-bottom:0;
+      transition:background .2s;
+    }
+    .sm-start-btn:hover{background:#1e3a8a;}
+    .submit-btn{
+      width:100%;padding:14px;background:#059669;color:#fff;border:none;
+      border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;
+      font-family:inherit;margin-bottom:14px;transition:background .2s;
+    }
+    .submit-btn:hover{background:#047857;}
+    .submit-btn:disabled{background:#9ca3af;cursor:not-allowed;}
+
+    /* ===== 完了カード（初学モード） ===== */
+    .done-card{
+      background:#fff;border-radius:16px;padding:40px 24px;
+      text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.1);
+    }
+    .done-icon{font-size:52px;margin-bottom:14px;}
+    .done-title{font-size:18px;font-weight:700;color:#1a202c;margin-bottom:6px;}
+    .done-sub{font-size:13px;color:#64748b;margin-bottom:24px;}
+    .done-actions{display:flex;flex-direction:column;gap:10px;}
+
+    /* ===== 準備中 ===== */
+    .coming-card{
+      background:#fff;border-radius:16px;padding:50px 24px;
+      text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.08);color:#6b7280;
+    }
+    .coming-icon{font-size:48px;margin-bottom:14px;}
+    .coming-title{font-size:18px;font-weight:600;color:#374151;margin-bottom:8px;}
+    .coming-text{font-size:14px;}
+
+    /* ===== 学習順/ランダム切替 ===== */
+    .order-row{
+      display:flex;align-items:center;gap:6px;margin-bottom:10px;
+    }
+    .order-label{font-size:12px;color:#64748b;margin-right:2px;white-space:nowrap;}
+    .order-btn{
+      padding:5px 14px;border-radius:20px;border:1.5px solid #cbd5e1;
+      background:#fff;color:#64748b;font-size:12px;font-weight:600;
+      cursor:pointer;font-family:inherit;transition:all .2s;
+    }
+    .order-btn.active{background:#2563eb;border-color:#2563eb;color:#fff;}
+    .order-btn:hover:not(.active){background:#f1f5f9;border-color:#93c5fd;}
+
+    /* KaTeX調整 */
+    .katex{font-size:1em;}
+    .katex-display{margin:.3em 0;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="hdr-school">神奈川県立湘南高等学校　物理</div>
+  <div class="hdr-title">🧲 磁気・電磁誘導の基本知識</div>
+  <div class="hdr-sub" id="hdrSub"></div>
+</header>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="main">
+  <div class="mode-row">
+    <button class="mode-btn" id="modeIntro"  onclick="setMode('intro')">🔰 初学モード</button>
+    <button class="mode-btn" id="modeStudy"  onclick="setMode('study')">📖 自習モード</button>
+    <button class="mode-btn" id="modeSubmit" onclick="setMode('submit')">📤 送信モード</button>
+  </div>
+  <div id="content"></div>
+</div>
+
+<script>
+// ============================================================
+// データ定義
+// choices[0] が常に正解。自習・送信モードでは表示時にシャッフルする。
+// ============================================================
+const SECTIONS = [
+  {
+    id: 1,
+    label: "基本①",
+    subtitle: "磁場・磁界の性質",
+    available: true,
+    questions: [
+      { id: 1,  text: "磁石の両端にある2種類の極を何というか。",
+        choices: ["N極とS極", "N極とP極", "正極と負極", "A極とB極"] },
+      { id: 2,  text: "異なる磁極（N極とS極）を近づけるとどうなるか。",
+        choices: ["引き合う", "反発する", "何も起こらない", "磁力が消える"] },
+      { id: 3,  text: "磁極の強さを表す量は何か。",
+        choices: ["磁気量", "磁束", "磁束密度", "透磁率"] },
+      { id: 4,  text: "磁気量の記号はどれか。",
+        choices: ["\\(m\\)", "\\(q\\)", "\\(e\\)", "\\(v\\)"] },
+      { id: 5,  text: "磁気量の主な単位はどれか。",
+        choices: ["Wb（ウェーバ）", "C（クーロン）", "T（テスラ）", "N/Wb"] },
+      { id: 6,  text: "距離 \\(r\\) に置かれた磁気量 \\(m_1\\)、\\(m_2\\) をもつ磁荷の間にはたらく磁気力の大きさ \\(F\\) を表す式はどれか（磁気力に関するクーロンの法則の比例定数を \\(k\\) とする）。",
+        choices: [
+          "\\(F = k\\dfrac{|m_1||m_2|}{r^2}\\)",
+          "\\(F = k\\dfrac{|m_1||m_2|}{r}\\)",
+          "\\(F = \\dfrac{|m_1||m_2|}{r^2}\\)",
+          "\\(F = k\\dfrac{|m_1|^2|m_2|^2}{r^2}\\)"
+        ] },
+      { id: 7,  text: "磁力がおよぶ空間を何というか。",
+        choices: ["磁場（磁界）", "電場", "重力場", "力線場"] },
+      { id: 8,  text: "磁場（磁界）の強さを表す記号はどれか。",
+        choices: ["\\(H\\)", "\\(B\\)", "\\(E\\)", "\\(F\\)"] },
+      { id: 9,  text: "磁場（磁界）の単位はどれか。",
+        choices: ["N/Wb", "N/C", "N\u00b7Wb", "Wb"] },
+      { id: 10, text: "磁場（磁界）とは何か。",
+        choices: [
+          "単位磁気量（1Wb）の正の磁荷にはたらく力",
+          "単位磁気量（1Wb）の負の磁荷にはたらく力",
+          "ある磁気量の正の磁荷にはたらく力",
+          "単位磁気量（1Wb）の正の磁荷がもつ位置エネルギー"
+        ] },
+      { id: 11, text: "磁場（磁界）の向きは、その点に置いた方位磁針のどちらの極が指す向きと定義されるか。",
+        choices: ["N極が指す向き", "S極が指す向き", "磁針の中心の向き", "磁針に垂直な向き"] },
+      { id: 12, text: "磁場（磁界）のようすを表す線を何というか。",
+        choices: ["磁力線", "電気力線", "等高線", "磁束線密度"] },
+      { id: 13, text: "磁力線はどのように出入りするか。",
+        choices: ["N極から出てS極に入る", "S極から出てN極に入る", "N極から出て無限遠に向かう", "両極から出て交わらない"] },
+      { id: 14, text: "磁力線の間隔が密な場所ほど磁場（磁界）はどうなるか。",
+        choices: ["強い", "弱い", "変化しない", "向きが逆になる"] },
+      { id: 15, text: "磁場（磁界）中の鉄が磁石の性質を帯びることを何というか。",
+        choices: ["磁化", "帯電", "分極", "電磁誘導"] },
+      { id: 16, text: "鉄のように強く磁化されるもの、わずかに磁化されるもの、磁場（磁界）と逆方向にわずかに磁化されるものの名称の正しい組み合わせはどれか。",
+        choices: [
+          "強磁性体・常磁性体・反磁性体",
+          "常磁性体・強磁性体・反磁性体",
+          "強磁性体・反磁性体・常磁性体",
+          "反磁性体・常磁性体・強磁性体"
+        ] },
+      { id: 17, text: "地磁気において、地球の北極付近にできる磁極はN極かS極か。",
+        choices: ["S極", "N極", "N極でもS極でもない", "場所や時期によって変わる"] },
+      { id: 18, text: "直線電流のまわりにできる磁場（磁界）の向きを決める法則を何というか。",
+        choices: ["右ねじの法則", "左手の法則", "レンツの法則", "フレミングの法則"] },
+      { id: 19, text: "直線電流 \\(I\\) [A] から距離 \\(r\\) [m] の点にできる磁場（磁界）の強さ \\(H\\) を表す式はどれか。",
+        choices: ["\\(H = \\dfrac{I}{2\\pi r}\\)", "\\(H = \\dfrac{I}{2r}\\)", "\\(H = 2\\pi rI\\)", "\\(H = nI\\)"] },
+      { id: 20, text: "半径 \\(r\\) [m] の円形コイルに電流 \\(I\\) [A] を流したとき、中心にできる磁場（磁界）の強さ \\(H\\) を表す式はどれか。",
+        choices: ["\\(H = \\dfrac{I}{2r}\\)", "\\(H = \\dfrac{I}{2\\pi r}\\)", "\\(H = nI\\)", "\\(H = \\dfrac{I}{r}\\)"] },
+      { id: 21, text: "1mあたり \\(n\\) 回巻いたソレノイドに電流 \\(I\\) [A] を流したとき、内部にできる一様な磁場（磁界）の強さ \\(H\\) を表す式はどれか。",
+        choices: ["\\(H = nI\\)", "\\(H = \\dfrac{I}{2\\pi r}\\)", "\\(H = \\dfrac{I}{2r}\\)", "\\(H = \\dfrac{n}{I}\\)"] }
+    ]
+  },
+  {
+    id: 2,
+    label: "基本②",
+    subtitle: "電流が磁場（磁界）から受ける力",
+    available: true,
+    questions: [
+      { id: 22, text: "磁束密度の記号はどれか。",
+        choices: ["\\(B\\)", "\\(H\\)", "\\(E\\)", "\\(F\\)"] },
+      { id: 23, text: "磁束密度の単位はどれか。",
+        choices: ["T（テスラ）", "A（アンペア）", "C（クーロン）", "N（ニュートン）"] },
+      { id: 24, text: "磁場（磁界） \\(H\\) であるとき、磁束密度 \\(B\\) を表す式はどれか（透磁率を \\(\\mu\\) とする）。",
+        choices: ["\\(B = \\mu H\\)", "\\(B = \\dfrac{H}{\\mu}\\)", "\\(B = 2\\pi\\mu H\\)", "\\(B = \\dfrac{\\mu}{H}\\)"] },
+      { id: 25, text: "直線電流の周りにできる磁場（磁界）の向きを決める右ねじの法則（右手の法則）において、右手の親指と残りの4本の指の向きに対応する組み合わせとして適切なものはどれか。",
+        choices: [
+          "親指：電流、4本の指：磁場（磁界）",
+          "親指：磁場（磁界）、4本の指：電流",
+          "親指：力、4本の指：磁場（磁界）",
+          "親指：磁場（磁界）、4本の指：力"
+        ] },
+      { id: 26, text: "磁場（磁界）中の電流が受ける力の向きを求める法則を何というか。",
+        choices: ["フレミングの左手の法則", "フレミングの右手の法則", "右ねじの法則", "レンツの法則"] },
+      { id: 27, text: "フレミングの左手の法則において、左手の指が示す向きに対応する物理量の組み合わせとして適切なものはどれか。",
+        choices: [
+          "親指：力F、人差し指：磁束密度B、中指：電流I",
+          "親指：磁束密度B、人差し指：力F、中指：電流I",
+          "親指：電流I、人差し指：力F、中指：磁束密度B",
+          "親指：電流I、人差し指：磁束密度B、中指：力F"
+        ] },
+      { id: 28, text: "磁束密度 \\(B\\) [T] の一様な磁場（磁界）に垂直に長さ \\(L\\) [m] の導線を置き、電流 \\(I\\) [A] を流したとき、導線が受ける力 \\(F\\) を表す式はどれか。",
+        choices: ["\\(F = IBL\\)", "\\(F = \\dfrac{IB}{L}\\)", "\\(F = \\dfrac{IL}{B}\\)", "\\(F = I + BL\\)"] },
+      { id: 29, text: "磁場（磁界）と電流のなす角が \\(\\theta\\) のとき、導線（長さ \\(L\\)、電流 \\(I\\)）が受ける力 \\(F\\) を表す式はどれか。",
+        choices: ["\\(F = IBL\\sin\\theta\\)", "\\(F = IBL\\cos\\theta\\)", "\\(F = IBL\\tan\\theta\\)", "\\(F = IBL\\theta\\)"] },
+      { id: 30, text: "平行に置かれた2本の導線に同じ向きの電流を流すと、導線間には何がはたらくか。",
+        choices: ["引力", "斥力", "力ははたらかない", "回転力"] },
+      { id: 31, text: "磁束の記号はどれか。",
+        choices: ["\\(\\Phi\\)", "\\(\\Omega\\)", "\\(\\Sigma\\)", "\\(\\Psi\\)"] },
+      { id: 32, text: "磁束の単位はどれか。",
+        choices: ["Wb", "C", "T", "N/Wb"] },
+      { id: 33, text: "磁束密度 \\(B\\) と磁束 \\(\\Phi\\) の関係式はどれか。",
+        choices: [
+          "\\(\\Phi = BS\\)（S：面積）",
+          "\\(\\Phi = BL\\)（L：長さ）",
+          "\\(\\Phi = \\dfrac{B}{S}\\)（S：面積）",
+          "\\(\\Phi = \\mu BS\\)（S：面積、\\(\\mu\\)：透磁率）"
+        ] },
+      { id: 34, text: "磁場（磁界）中を運動する荷電粒子が受ける力を何というか。",
+        choices: ["ローレンツ力", "クーロン力", "静電気力", "遠心力"] },
+      { id: 35, text: "モーター（電動機）は何のエネルギーを何のエネルギーに変換する装置か。",
+        choices: ["電気エネルギーを運動エネルギーに変換する", "運動エネルギーを電気エネルギーに変換する", "熱エネルギーを電気エネルギーに変換する", "化学エネルギーを電気エネルギーに変換する"] },
+      { id: 36, text: "磁束密度 \\(B\\) の磁場（磁界）中を速さ \\(v\\) で運動する電気量 \\(q\\) の荷電粒子が受ける力（ローレンツ力）を表す式はどれか（速度と磁場（磁界）が垂直の場合）。",
+        choices: ["\\(f = qvB\\)", "\\(f = \\dfrac{qv}{B}\\)", "\\(f = \\dfrac{qB}{v}\\)", "\\(f = q(v+B)\\)"] },
+      { id: 37, text: "ローレンツ力の向きを求めるとき、フレミングの左手の中指は何の向きに合わせるか。",
+        choices: ["正電荷の速度の向き", "磁場（磁界）に垂直な向き", "力の向き", "使わない"] },
+      { id: 38, text: "一様な磁場（磁界）中で、磁場（磁界）に垂直に入射した荷電粒子はどのような運動をするか。",
+        choices: ["等速円運動", "直線運動", "放物運動", "単振動"] },
+      { id: 39, text: "質量 \\(m\\)、電気量 \\(q\\) の荷電粒子が磁束密度 \\(B\\) の磁場（磁界）中で等速円運動するときの半径 \\(r\\) を表す式はどれか。",
+        choices: ["\\(r = \\dfrac{mv}{qB}\\)", "\\(r = \\dfrac{qB}{mv}\\)", "\\(r = mvqB\\)", "\\(r = \\dfrac{qvB}{m}\\)"] },
+      { id: 40, text: "上記の円運動の周期 \\(T\\) を表す式はどれか。",
+        choices: ["\\(T = \\dfrac{2\\pi m}{qB}\\)", "\\(T = \\dfrac{2\\pi r}{v}\\)", "\\(T = \\dfrac{qB}{2\\pi m}\\)", "\\(T = \\dfrac{m}{2\\pi qB}\\)"] },
+      { id: 41, text: "サイクロトロンなどの加速器は、荷電粒子の円運動の周期が速さによらないという性質をどのように利用しているか。",
+        choices: ["一定周期で加速電圧を切り替えて効率よく加速する", "粒子の質量を変化させる", "磁場（磁界）の向きを常に変化させる", "電流を止めて粒子を静止させる"] },
+      { id: 42, text: "電流が流れている導体や半導体の板に、電流に垂直に磁場（磁界）を加えると、電流と磁場（磁界）の両方に垂直な方向に電位差が生じる。この現象を何というか。",
+        choices: ["ホール効果", "ゼーベック効果", "ピエゾ効果", "光電効果"] }
+    ]
+  },
+  {
+    id: 3,
+    label: "基本③",
+    subtitle: "電磁誘導の基礎",
+    available: true,
+    questions: [
+      { id: 43, text: "コイルを貫く磁束が変化すると、コイルに起電力が生じる現象を何というか。",
+        choices: ["電磁誘導", "静電誘導", "自己誘導", "相互誘導"] },
+      { id: 44, text: "電磁誘導によって生じる起電力を何というか。",
+        choices: ["誘導起電力", "逆起電力", "静電気力", "保持起電力"] },
+      { id: 45, text: "ある面を垂直に貫く磁束 \\(\\Phi\\) を、磁束密度 \\(B\\) と面積 \\(S\\) で表す式はどれか。",
+        choices: ["\\(\\Phi = BS\\)", "\\(\\Phi = \\dfrac{B}{S}\\)", "\\(\\Phi = \\dfrac{S}{B}\\)", "\\(\\Phi = B + S\\)"] },
+      { id: 46, text: "ファラデーの電磁誘導の法則としてもっとも適切なものはどれか。",
+        choices: [
+          "誘導起電力の大きさは、磁束の時間変化に比例する。",
+          "誘導起電力の大きさは、磁束密度の時間変化に比例する。",
+          "誘導起電力の大きさは、磁束の空間変化に比例する。",
+          "誘導起電力の大きさは、磁場（磁界）の時間変化に比例する。"
+        ] },
+      { id: 47, text: "微小時間 \\(\\Delta t\\) の間にコイルを貫く磁束が \\(\\Delta\\Phi\\) 変化したとき、巻数 \\(N\\) のコイルに生じる誘導起電力 \\(V\\) の大きさを表す式（ファラデーの電磁誘導の法則）はどれか。",
+        choices: ["\\(V = N\\dfrac{\\Delta\\Phi}{\\Delta t}\\)", "\\(V = \\dfrac{\\Delta\\Phi}{N\\Delta t}\\)", "\\(V = N\\Delta\\Phi\\Delta t\\)", "\\(V = \\dfrac{\\Delta\\Phi}{N}\\)"] },
+      { id: 48, text: "レンツの法則としてもっとも適切なものはどれか。",
+        choices: [
+          "誘導電流は磁束の変化を妨げる向きに流れる",
+          "誘導電流は磁束の変化の向きと同じ向きに流れる",
+          "誘導電流は磁束の変化を強める向きに流れる",
+          "誘導電流は磁束密度を大きくする向きに流れる"
+        ] },
+      { id: 49, text: "コイルに棒磁石のN極を近づけると、コイルの磁石側の端には何極が誘導されるか。",
+        choices: ["N極", "S極", "極は生じない", "N極とS極が同時に生じる"] },
+      { id: 50, text: "コイルの巻数 \\(N\\) を増やすと、誘導起電力の大きさはどうなるか（磁束変化の割合が同じ場合）。",
+        choices: ["大きくなる", "小さくなる", "変化しない", "0になる"] },
+      { id: 51, text: "磁石をコイルから急に遠ざけると、磁石を近づけたときと比べて誘導電流の向きはどうなるか。",
+        choices: ["逆向きになる", "同じ向きになる", "電流は流れない", "磁石の速さで決まり動かす向きとは無関係"] },
+      { id: 52, text: "磁石を速く動かすほど、誘導起電力はどうなるか。",
+        choices: ["大きくなる", "小さくなる", "変化しない", "0になる"] },
+      { id: 53, text: "発電機は電磁誘導を利用して、何のエネルギーを何のエネルギーに変換する装置か。",
+        choices: ["力学的エネルギーを電気エネルギーに変換する", "電気エネルギーを力学的エネルギーに変換する", "熱エネルギーを電気エネルギーに変換する", "電気エネルギーを化学エネルギーに変換する"] }
+    ]
+  },
+  {
+    id: 4,
+    label: "基本④",
+    subtitle: "誘導起電力の大きさ・自己誘導",
+    available: true,
+    questions: [
+      { id: 54, text: "磁束密度 \\(B\\) の一様な磁場（磁界）に垂直な平面内で、長さ \\(L\\) の導体棒を磁場（磁界）にも導体棒にも垂直な向きに速さ \\(v\\) で動かすとき、導体棒に生じる誘導起電力 \\(V\\) を表す式はどれか。",
+        choices: ["\\(V = vBL\\)", "\\(V = \\dfrac{vB}{L}\\)", "\\(V = \\dfrac{vL}{B}\\)", "\\(V = v + BL\\)"] },
+      { id: 55, text: "誘導起電力 \\(V=vBL\\) の導体棒を含む回路の抵抗が \\(R\\) のとき、回路に流れる誘導電流 \\(I\\) を表す式はどれか。",
+        choices: ["\\(I = \\dfrac{vBL}{R}\\)", "\\(I = vBLR\\)", "\\(I = \\dfrac{R}{vBL}\\)", "\\(I = vBL + R\\)"] },
+      { id: 56, text: "磁場（磁界）中を動く導体棒に電磁誘導によって生じる力は、導体棒の運動をどうする向きにはたらくか。",
+        choices: ["妨げる向き（減速させる向き）", "加速させる向き", "力ははたらかない", "運動方向に垂直に加速させる"] },
+      { id: 57, text: "コイル自身に流れる電流が変化すると、そのコイル自身に誘導起電力が生じる現象を何というか。",
+        choices: ["自己誘導", "相互誘導", "静電誘導", "電磁誘導（他のコイルによるもの）"] },
+      { id: 58, text: "『IH家電』の『IH』は何の頭文字か。",
+        choices: [
+          "インダクション・ヒーティング（Induction Heating）",
+          "インダストリアル・ヒーティング",
+          "インディペンデント・ヒーティング",
+          "インクレディブル・ヒーティング"
+        ] },
+      { id: 59, text: "自己誘導における比例定数を何というか。",
+        choices: ["自己インダクタンス", "相互インダクタンス", "電気容量", "抵抗率"] },
+      { id: 60, text: "自己インダクタンスの「インダクタンス」を日本語にすると何というか。",
+        choices: ["自己電磁誘導係数", "自己電磁力係数", "自己発電係数", "自己電磁場係数"] },
+      { id: 61, text: "自己インダクタンスの記号はどれか。",
+        choices: ["\\(L\\)", "\\(M\\)", "\\(C\\)", "\\(R\\)"] },
+      { id: 62, text: "自己インダクタンスの単位はどれか。",
+        choices: ["H（ヘンリー）", "F（ファラド）", "T（テスラ）", "Wb（ウェーバ）"] },
+      { id: 63, text: "自己インダクタンス \\(L\\) のコイルを流れる電流が \\(\\Delta t\\) の間に \\(\\Delta I\\) 変化するとき、生じる誘導起電力 \\(V\\) の大きさを表す式はどれか。",
+        choices: ["\\(V = L\\dfrac{\\Delta I}{\\Delta t}\\)", "\\(V = \\dfrac{\\Delta I}{L\\Delta t}\\)", "\\(V = L\\Delta I\\Delta t\\)", "\\(V = \\dfrac{\\Delta I}{L}\\)"] },
+      { id: 64, text: "自己インダクタンス \\(L\\) のコイルに電流 \\(I\\) が流れているとき、コイルに蓄えられるエネルギー \\(U\\) を表す式はどれか。",
+        choices: ["\\(U = \\dfrac{1}{2}LI^2\\)", "\\(U = LI^2\\)", "\\(U = \\dfrac{1}{2}LI\\)", "\\(U = LI\\)"] },
+      { id: 65, text: "2つのコイルが近くにあり、一方のコイルの電流変化が他方のコイルに起電力を生じさせる現象を何というか。",
+        choices: ["相互誘導", "自己誘導", "静電誘導", "誘電分極"] },
+      { id: 66, text: "相互誘導を利用して電圧を変化させる装置を何というか。",
+        choices: ["変圧器（トランス）", "発電機", "モーター", "コンデンサー"] },
+      { id: 67, text: "相互インダクタンスの記号はどれか。",
+        choices: ["\\(M\\)", "\\(L\\)", "\\(C\\)", "\\(R\\)"] },
+      { id: 68, text: "1次コイルに流れる電流 \\(I_1\\)、2次コイルに流れる電流 \\(I_2\\)、相互インダクタンス \\(M\\) における相互誘導起電力 \\(V\\) を表す式はどれか。",
+        choices: [
+          "\\(V = -M\\dfrac{\\Delta I_1}{\\Delta t}\\)",
+          "\\(V = M\\dfrac{\\Delta I_1}{\\Delta t}\\)",
+          "\\(V = -M\\dfrac{\\Delta I_2}{\\Delta t}\\)",
+          "\\(V = -M\\dfrac{\\Delta I_2}{\\Delta I_1}\\)"
+        ] },
+      { id: 69, text: "変圧器の一次コイルの巻数を \\(N_1\\)、二次コイルの巻数を \\(N_2\\)、それぞれの電圧を \\(V_1\\)、\\(V_2\\) とすると、これらの関係を表す式はどれか。",
+        choices: ["\\(V_1:V_2 = N_1:N_2\\)", "\\(V_1:V_2 = N_2:N_1\\)", "\\(V_1 V_2 = N_1 N_2\\)", "\\(V_1 + V_2 = N_1 + N_2\\)"] },
+      { id: 70, text: "一円玉は磁石につかないが、磁石を素早く動かすと誘導電流が流れ、その電流が磁場（磁界）から力を受けるため、一円玉を動かすことができる。このときに流れる電流を何というか。",
+        choices: ["渦電流", "変位電流", "交流電流", "誘導電流"] }
+    ]
+  },
+  {
+    id: 5,
+    label: "基本⑤",
+    subtitle: "交流・電磁波・半導体",
+    available: true,
+    questions: [
+      { id: 71, text: "コイルを一様な磁場（磁界）中で一定の角速度で回転させると、コイルに生じる起電力はどのように変化するか。",
+        choices: ["正弦（サイン）関数的に周期的に変化する", "一定の値を保つ", "単調に増加し続ける", "ステップ状に変化する"] },
+      { id: 72, text: "時刻 \\(t\\) における交流の起電力 \\(v\\) を表す式はどれか（最大値を \\(V_0\\)、角周波数を \\(\\omega\\) とする）。",
+        choices: ["\\(v = V_0\\sin\\omega t\\)", "\\(v = V_0\\cos t\\)", "\\(v = V_0\\omega t\\)", "\\(v = \\dfrac{V_0}{\\sin\\omega t}\\)"] },
+      { id: 73, text: "磁束密度 \\(B\\) 中にある角速度 \\(\\omega\\) で回転する断面積 \\(S\\) の1回巻きコイルに発生する起電力 \\(V\\) を、時間 \\(t\\) の関数として表す式はどれか（初期位相0とする）。",
+        choices: ["\\(V = BS\\omega\\sin\\omega t\\)", "\\(V = BS\\omega\\cos\\omega t\\)", "\\(V = BS\\omega\\sin t\\)", "\\(V = \\dfrac{BS}{\\omega}\\sin\\omega t\\)"] },
+      { id: 74, text: "交流の角周波数 \\(\\omega\\) を、周波数 \\(f\\) を用いて表す式はどれか。",
+        choices: ["\\(\\omega = 2\\pi f\\)", "\\(\\omega = \\dfrac{f}{2\\pi}\\)", "\\(\\omega = \\pi f\\)", "\\(\\omega = f^2\\)"] },
+      { id: 75, text: "抵抗 \\(R\\) に交流電源 \\(V=BS\\omega\\sin\\omega t\\) を接続したときの電流 \\(I\\) を表す式はどれか。",
+        choices: ["\\(I = \\dfrac{BS\\omega}{R}\\sin\\omega t\\)", "\\(I = BS\\omega R\\sin\\omega t\\)", "\\(I = \\dfrac{BS\\omega}{R}\\cos\\omega t\\)", "\\(I = \\dfrac{BS\\omega}{R}\\sin t\\)"] },
+      { id: 76, text: "交流回路（R回路）において、Rに流れる電流の位相は、電圧の位相と比べるとどうなるか。",
+        choices: ["同じ（位相差はない）", "\\(\\pi/2\\) 進んでいる", "\\(\\pi/2\\) 遅れている", "\\(\\pi\\) 遅れている"] },
+      { id: 77, text: "交流の実効値とはどのような値か。",
+        choices: ["交流と同じ電力（仕事率）を消費する直流の値", "交流の最大値", "交流の平均値（単純平均）", "交流の周期の逆数"] },
+      { id: 78, text: "交流の最大値 \\(V_0\\) と実効値 \\(V_e\\) の関係を表す式はどれか。",
+        choices: ["\\(V_e = \\dfrac{V_0}{\\sqrt{2}}\\)", "\\(V_e = V_0\\sqrt{2}\\)", "\\(V_e = \\dfrac{V_0}{2}\\)", "\\(V_e = 2V_0\\)"] },
+      { id: 79, text: "家庭用コンセントの電圧「100V」は、交流電圧のどの値を指すか。",
+        choices: ["実効値", "最大値", "平均値", "瞬間値"] },
+      { id: 80, text: "交流回路（R回路）において、電圧の最大値 \\(V_0\\)、電流の最大値が \\(I_0\\) であるとき、電力の平均値を表す式はどれか。",
+        choices: ["\\(\\dfrac{V_0I_0}{2}\\)", "\\(V_0I_0\\)", "\\(\\dfrac{V_0I_0}{\\sqrt{2}}\\)", "\\(0\\)"] },
+      { id: 81, text: "電圧の最大値 \\(V_0\\)、電流の最大値が \\(I_0\\) であるとき、電圧と電流の実効値 \\(V_e\\)、\\(I_e\\) を表す組み合わせはどれか。",
+        choices: [
+          "\\(V_e=\\dfrac{V_0}{\\sqrt2}\\)、\\(I_e=\\dfrac{I_0}{\\sqrt2}\\)",
+          "\\(V_e=\\dfrac{V_0}{2}\\)、\\(I_e=\\dfrac{I_0}{2}\\)",
+          "\\(V_e=V_0\\)、\\(I_e=I_0\\)",
+          "\\(V_e=\\sqrt2\\,V_0\\)、\\(I_e=\\sqrt2\\,I_0\\)"
+        ] },
+      { id: 82, text: "実効値 \\(V_e\\)、\\(I_e\\) を用いると、交流回路（R回路）の電力の平均値を表す式はどれか。",
+        choices: ["\\(V_eI_e\\)", "\\(\\dfrac{V_eI_e}{2}\\)", "\\(0\\)", "\\(\\sqrt2\\,V_eI_e\\)"] },
+      { id: 83, text: "コンデンサーやコイルの交流に対する抵抗のはたらきを何というか。",
+        choices: ["リアクタンス", "インダクタンス", "レジスタンス", "コンダクタンス"] },
+      { id: 84, text: "コンデンサーやコイルのリアクタンスの記号はどれか。",
+        choices: ["\\(X\\)", "\\(R\\)", "\\(Z\\)", "\\(L\\)"] },
+      { id: 85, text: "角周波数 \\(\\omega\\) の電源をもつ交流回路（C回路）において、コンデンサーの容量リアクタンス \\(X\\) を表す式はどれか。",
+        choices: ["\\(X = \\dfrac{1}{\\omega C}\\)", "\\(X = \\omega C\\)", "\\(X = \\dfrac{\\omega}{C}\\)", "\\(X = \\dfrac{C}{\\omega}\\)"] },
+      { id: 86, text: "コンデンサー \\(C\\) に交流電源 \\(V=V_0\\sin\\omega t\\) を接続したときの電流 \\(I\\) を表す式はどれか。",
+        choices: [
+          "\\(I = \\omega CV_0\\sin(\\omega t+\\dfrac{\\pi}{2})\\)",
+          "\\(I = \\omega CV_0\\sin(\\omega t-\\dfrac{\\pi}{2})\\)",
+          "\\(I = \\dfrac{V_0}{\\omega C}\\sin(\\omega t+\\dfrac{\\pi}{2})\\)",
+          "\\(I = \\dfrac{V_0}{\\omega C}\\sin(\\omega t-\\dfrac{\\pi}{2})\\)"
+        ] },
+      { id: 87, text: "交流回路（C回路）において、Cに流れる電流の位相は、電圧の位相と比べるとどうなるか。",
+        choices: ["\\(\\pi/2\\) 進んでいる", "同じ", "\\(\\pi/2\\) 遅れている", "\\(\\pi\\) 進んでいる"] },
+      { id: 88, text: "角周波数 \\(\\omega\\) の電源をもつ交流回路（L回路）において、コイルの誘導リアクタンス \\(X\\) を表す式はどれか。",
+        choices: ["\\(X = \\omega L\\)", "\\(X = \\dfrac{1}{\\omega L}\\)", "\\(X = \\dfrac{L}{\\omega}\\)", "\\(X = \\dfrac{\\omega}{L}\\)"] },
+      { id: 89, text: "コイル \\(L\\) に交流電源 \\(V=V_0\\sin\\omega t\\) を接続したときの電流 \\(I\\) を表す式はどれか。",
+        choices: [
+          "\\(I = \\dfrac{V_0}{\\omega L}\\sin(\\omega t-\\dfrac{\\pi}{2})\\)",
+          "\\(I = \\omega LV_0\\sin(\\omega t-\\dfrac{\\pi}{2})\\)",
+          "\\(I = \\omega LV_0\\sin(\\omega t+\\dfrac{\\pi}{2})\\)",
+          "\\(I = \\dfrac{V_0}{\\omega L}\\sin(\\omega t+\\dfrac{\\pi}{2})\\)"
+        ] },
+      { id: 90, text: "交流回路（L回路）において、Lに流れる電流の位相は、電圧の位相と比べるとどうなるか。",
+        choices: ["\\(\\pi/2\\) 遅れている", "同じ", "\\(\\pi/2\\) 進んでいる", "\\(\\pi\\) 遅れている"] },
+      { id: 91, text: "交流回路（C回路）において、電圧の最大値 \\(V_0\\)、電流の最大値が \\(I_0\\) であるときの平均消費電力はどれか。",
+        choices: ["\\(0\\)", "\\(V_0I_0\\)", "\\(\\dfrac{V_0I_0}{2}\\)", "\\(\\dfrac{V_0I_0}{\\sqrt2}\\)"] },
+      { id: 92, text: "交流回路（L回路）において、電圧の最大値 \\(V_0\\)、電流の最大値が \\(I_0\\) であるときの平均消費電力はどれか。",
+        choices: ["\\(0\\)", "\\(V_0I_0\\)", "\\(\\dfrac{V_0I_0}{2}\\)", "\\(\\dfrac{V_0I_0}{\\sqrt2}\\)"] },
+      { id: 93, text: "RLC直列回路におけるインピーダンス \\(Z\\) を表す式はどれか。",
+        choices: [
+          "\\(Z=\\sqrt{R^2+\\left(\\omega L-\\dfrac{1}{\\omega C}\\right)^2}\\)",
+          "\\(Z=\\sqrt{\\dfrac{1}{R^2}+\\left(\\omega L-\\dfrac{1}{\\omega C}\\right)^2}\\)",
+          "\\(Z=\\sqrt{R^2+\\left(\\omega C-\\dfrac{1}{\\omega L}\\right)^2}\\)",
+          "\\(Z=\\sqrt{R^2+\\left(\\omega L-\\omega C\\right)^2}\\)"
+        ] },
+      { id: 94, text: "変圧器で電圧を高くすると、電流はどのように変化するか（電力一定とする）。",
+        choices: ["小さくなる", "大きくなる", "変化しない", "電圧と同じ倍率で大きくなる"] },
+      { id: 95, text: "送電の際に高電圧で送電する主な理由は何か。",
+        choices: ["送電線での電力損失（ジュール熱）を減らすため", "送電線を細くできないため", "発電量を増やすため", "交流を直流に変換しやすくするため"] },
+      { id: 96, text: "発電所で発電された交流が家庭に届くまでに、電圧はどのように変化させられるか。",
+        choices: ["送電時に昇圧し、家庭に近づくにつれて降圧する", "常に一定の電圧を保つ", "送電時に降圧し、家庭に近づくにつれて昇圧する", "直流に変換されるので電圧の概念はない"] },
+      { id: 97, text: "日本では地域によって交流の周波数が異なる。その組み合わせとして正しいものはどれか。",
+        choices: ["東日本50Hz・西日本60Hz", "東日本60Hz・西日本50Hz", "東日本と西日本で同じ50Hz", "東日本と西日本で同じ60Hz"] },
+      { id: 98, text: "電気振動が生じているLC回路における角周波数 \\(\\omega\\) を表す式はどれか。",
+        choices: ["\\(\\omega = \\dfrac{1}{\\sqrt{LC}}\\)", "\\(\\omega = \\dfrac{1}{LC}\\)", "\\(\\omega = \\dfrac{1}{(LC)^2}\\)", "\\(\\omega = \\sqrt{LC}\\)"] },
+      { id: 99, text: "電気振動が生じているLC回路における固有振動数 \\(f_0\\) を表す式はどれか。",
+        choices: ["\\(f_0 = \\dfrac{1}{2\\pi\\sqrt{LC}}\\)", "\\(f_0 = \\dfrac{1}{2\\pi LC}\\)", "\\(f_0 = \\dfrac{1}{2\\pi(LC)^2}\\)", "\\(f_0 = 2\\pi\\sqrt{LC}\\)"] },
+      { id: 100, text: "日本の家庭用電源は直流・交流のどちらか。またその実効値は何Vか。",
+        choices: ["交流、100V", "交流、141V", "直流、100V", "直流、141V"] },
+      { id: 101, text: "1次コイルの巻数を \\(N_1\\)、加える電圧を \\(V_1\\)、2次コイルの巻数を \\(N_2\\)、発生する電圧を \\(V_2\\) とするとき、\\(V_1:V_2\\) を表す比はどれか。",
+        choices: ["\\(N_1:N_2\\)", "\\(N_2:N_1\\)", "\\(N_1^2:N_2^2\\)", "\\(N_2^2:N_1^2\\)"] },
+      { id: 102, text: "電力損失がない場合、1次コイルの巻数を \\(N_1\\)、2次コイルの巻数を \\(N_2\\)、1次コイルの電流を \\(I_1\\)、2次コイルの電流を \\(I_2\\) とするとき、\\(I_1:I_2\\) を表す比はどれか。",
+        choices: ["\\(N_2:N_1\\)", "\\(N_1:N_2\\)", "\\(N_1^2:N_2^2\\)", "\\(N_2^2:N_1^2\\)"] },
+      { id: 103, text: "電磁波の存在を理論的に予言したのは誰か。",
+        choices: ["マクスウェル", "ヘルツ", "アインシュタイン", "ボーア"] },
+      { id: 104, text: "電磁波を実験的に発見したのは誰か。",
+        choices: ["ヘルツ", "マクスウェル", "アインシュタイン", "ボーア"] },
+      { id: 105, text: "電磁波は横波か縦波か。",
+        choices: ["横波", "縦波", "横波でも縦波でもない", "伝わる媒質によって異なる"] },
+      { id: 106, text: "電波とγ線とでは、波長が長いのはどちらか。",
+        choices: ["電波", "γ線", "波長は同じ", "比較できない"] },
+      { id: 107, text: "電波とγ線とでは、周波数が大きいのはどちらか。",
+        choices: ["γ線", "電波", "周波数は同じ", "比較できない"] },
+      { id: 108, text: "電波とγ線とでは、エネルギーが大きいのはどちらか。",
+        choices: ["γ線", "電波", "エネルギーは同じ", "比較できない"] },
+      { id: 109, text: "可視光線の中で波長がもっとも長い色はどれか。",
+        choices: ["赤", "紫", "黄", "青"] },
+      { id: 110, text: "温熱効果のある電磁波はどれか。",
+        choices: ["赤外線", "紫外線", "電波", "X線"] },
+      { id: 111, text: "可視光の次に波長が短く、殺菌作用や分子の結合を壊すはたらきがある電磁波はどれか。",
+        choices: ["紫外線", "赤外線", "X線", "γ線"] },
+      { id: 112, text: "透過性が強く、レントゲン写真に用いられる電磁波はどれか。",
+        choices: ["X線", "紫外線", "電波", "γ線"] },
+      { id: 113, text: "透過性が特に強く、材料の非破壊検査や腫瘍の治療に用いられている電磁波はどれか。",
+        choices: ["γ線", "X線", "紫外線", "赤外線"] },
+      { id: 114, text: "半導体に不純物を添加して、負の電荷（伝導電子）が流れるようになった半導体を何型半導体というか。",
+        choices: ["n型", "p型", "i型", "e型"] },
+      { id: 115, text: "半導体に不純物を添加して、正の電荷が流れるように見える半導体を何型半導体というか。",
+        choices: ["p型", "n型", "i型", "e型"] },
+      { id: 116, text: "p型半導体において、電子が不足していることにより正電荷のように見える状態を何というか。",
+        choices: ["正孔", "電子", "電荷", "クーパー対"] },
+      { id: 117, text: "n型半導体とp型半導体を1つずつ組み合わせてできる素子を何というか。",
+        choices: ["ダイオード", "誘電体", "良導体", "トランジスタ"] },
+      { id: 118, text: "ダイオードには一方向にだけ電流を流す作用がある。この作用を何というか。",
+        choices: ["整流作用", "制限作用", "律速作用", "阻止作用"] },
+      { id: 119, text: "トランジスタが電流や電圧を大きくする作用・効果を何というか。",
+        choices: ["増幅作用", "整流作用", "光電効果", "コンプトン効果"] }
+    ]
+  }
+];
+
+
+
+// ============================================================
+// 各問題の解説文
+// ============================================================
+const EXPLANATIONS = {
+  1 : "磁石には磁力の強いN極（北を指す極）とS極（南を指す極）の2種類がある。",
+  2 : "異種の磁極間には引力、同種の磁極間には斥力がはたらく。",
+  3 : "磁極の強さ（磁荷の大きさ）を表す量を磁気量という。",
+  4 : "磁気量（磁荷の大きさ）は記号 \\(m\\) で表される。単位はウェーバ[Wb]。",
+  5 : "磁気量の単位はウェーバ[Wb]である。電気量の単位はクーロン[C]、磁束密度の単位はテスラ[T]と混同しないよう注意。",
+  6 : "磁気力に関するクーロンの法則：\\(F=k\\dfrac{|m_1||m_2|}{r^2}\\)。距離の2乗に反比例し、磁気量の積に比例する。",
+  7 : "磁石や電流のまわりに生じ、磁力がはたらく空間を磁場（磁界）という。",
+  8 : "磁場（磁界）の強さは記号 \\(H\\) で表す。磁束密度 \\(B\\) とは区別される。",
+  9 : "磁場（磁界）の単位はN/Wb（ニュートン毎ウェーバ）である。",
+  10: "磁場（磁界）は、単位磁気量（1Wb）の正の磁荷にはたらく力として定義される。",
+  11: "磁場（磁界）の向きは、その位置に置いた方位磁針のN極が指す向きと定義される。",
+  12: "磁場（磁界）の向きと強さを視覚的に表す線を磁力線という。",
+  13: "磁力線はN極から出てS極に入るように描かれ、途中で交わらない。",
+  14: "磁力線の密度は磁場（磁界）の強さを表し、間隔が密なほど磁場（磁界）が強い。",
+  15: "磁性体が磁場（磁界）の中に置かれて磁石の性質を帯びることを磁化という。",
+  16: "鉄など磁場（磁界）の向きに強く磁化されるものを強磁性体、弱く磁化されるものを常磁性体、磁場（磁界）と逆向きにわずかに磁化されるものを反磁性体という。",
+  17: "地球の北極付近の地磁気の極には磁石のN極が引き寄せられることから、その極はS極である（地理上の北極と磁極の南北は逆になっている）。",
+  18: "電流の向きにねじを進めるとき、ねじを回す向きが磁場（磁界）の向きと一致する。これを右ねじの法則という。",
+  19: "直線電流のまわりの磁場（磁界）は電流に比例し距離に反比例する。\\(H=\\dfrac{I}{2\\pi r}\\) と表される。",
+  20: "円形電流の中心の磁場（磁界）の強さは \\(H=\\dfrac{I}{2r}\\) と表される。",
+  21: "ソレノイド内部の磁場（磁界）は一様で、\\(H=nI\\)（\\(n\\)：単位長さあたりの巻数）と表される。",
+
+  22: "磁束密度は記号Bで表される。磁場（磁界）の強さHとは区別される。",
+  23: "磁束密度の単位はテスラ[T]である。",
+  24: "磁束密度は磁場（磁界）の強さに透磁率を掛けたもので、\\(B=\\mu H\\) と表される。",
+  25: "右ねじの法則では、右手の親指を電流の向きに向けると、残りの4本の指を握る向きが磁場（磁界）の向きを表す。",
+  26: "磁場（磁界）中の電流が受ける力の向きは、フレミングの左手の法則で求められる。",
+  27: "フレミングの左手は、親指＝力F、人差し指＝磁束密度B、中指＝電流Iの向きを表す。",
+  28: "磁場（磁界）に垂直な電流が磁場（磁界）から受ける力の大きさは \\(F=IBL\\) である。",
+  29: "電流と磁場（磁界）のなす角が \\(\\theta\\) のとき、力の大きさは \\(F=IBL\\sin\\theta\\) となる（\\(\\theta=90°\\)で最大）。",
+  30: "同じ向きの平行電流間には引力、逆向きの電流間には斥力がはたらく。",
+  31: "磁束は記号\\(\\Phi\\)（ファイ）で表される。",
+  32: "磁束の単位はウェーバ[Wb]である。",
+  33: "磁束は磁束密度と面積の積で表され、\\(\\Phi=BS\\)（単位：Wb）である。",
+  34: "磁場（磁界）中を運動する荷電粒子が磁場（磁界）から受ける力をローレンツ力という。",
+  35: "モーターは磁場（磁界）中の電流が受ける力を利用して、電気エネルギーを運動エネルギー（回転）に変換する装置である。",
+  36: "運動する荷電粒子が磁場（磁界）から受ける力をローレンツ力といい、\\(f=qvB\\) と表される。",
+  37: "正電荷の場合、電流の向きは速度の向きと一致するので、中指を速度の向きに合わせてローレンツ力の向きを求める。",
+  38: "ローレンツ力は常に速度に垂直にはたらき仕事をしないため、粒子は等速円運動をする。",
+  39: "円運動の向心力とローレンツ力のつり合い \\(\\dfrac{mv^2}{r}=qvB\\) より \\(r=\\dfrac{mv}{qB}\\) が得られる。",
+  40: "\\(T=\\dfrac{2\\pi r}{v}\\) に \\(r=\\dfrac{mv}{qB}\\) を代入すると \\(T=\\dfrac{2\\pi m}{qB}\\) となり、速さ \\(v\\) によらない。",
+  41: "周期が速さに依存しないため、一定の周期で交流電圧を切り替えるだけで粒子を繰り返し加速できる。",
+  42: "電流に垂直に磁場（磁界）を加えると、電流と磁場（磁界）の両方に垂直な方向に電位差が生じる現象をホール効果という。半導体のキャリアの種類の判定などに利用される。",
+
+  43: "コイルを貫く磁束が変化することでコイルに起電力が生じる現象を電磁誘導という。",
+  44: "電磁誘導によって生じる起電力を誘導起電力といい、これによって流れる電流を誘導電流という。",
+  45: "磁束は磁束密度と面積の積で表され、\\(\\Phi=BS\\)（単位：Wb）である。",
+  46: "ファラデーの電磁誘導の法則は、誘導起電力の大きさがコイルを貫く磁束の時間変化の割合に比例することを示す。",
+  47: "ファラデーの電磁誘導の法則により、誘導起電力の大きさは \\(V=N\\dfrac{\\Delta\\Phi}{\\Delta t}\\) で表される。",
+  48: "レンツの法則は、誘導電流がコイルを貫く磁束の変化を妨げる向きに流れることを示す法則である。",
+  49: "磁石を近づけると磁束の増加を妨げるように、磁石に近い側にN極（反発する極）が誘導される。",
+  50: "誘導起電力は巻数に比例して大きくなる。",
+  51: "磁束の変化（増加・減少）の向きが逆になるため、レンツの法則により誘導電流の向きも逆になる。",
+  52: "磁石を速く動かすほど磁束の時間変化の割合 \\(\\dfrac{\\Delta\\Phi}{\\Delta t}\\) が大きくなるため、誘導起電力も大きくなる。",
+  53: "発電機はコイルや磁石を回転させることで電磁誘導を起こし、力学的エネルギーを電気エネルギーに変換する。",
+
+  54: "磁場（磁界）中を動く導体棒には \\(V=vBL\\) の誘導起電力が生じる。",
+  55: "オームの法則 \\(I=V/R\\) に \\(V=vBL\\) を代入すると \\(I=\\dfrac{vBL}{R}\\) となる。",
+  56: "レンツの法則により、誘導電流が磁場（磁界）から受ける力は導体棒の運動を妨げる向きにはたらく（電磁ブレーキの原理）。",
+  57: "コイルを流れる電流の変化によって、そのコイル自身に誘導起電力が生じる現象を自己誘導という。",
+  58: "IH（Induction Heating＝誘導加熱）は、電磁誘導によって生じる渦電流のジュール熱を利用して調理器具などを加熱する仕組みである。",
+  59: "自己誘導の強さを表す比例定数を自己インダクタンスといい、記号 \\(L\\) で表す。",
+  60: "自己インダクタンスは日本語で自己電磁誘導係数ともいう。",
+  61: "自己インダクタンスは記号 \\(L\\) で表される。",
+  62: "自己インダクタンスの単位はヘンリー[H]である。",
+  63: "自己誘導による起電力は \\(V=L\\dfrac{\\Delta I}{\\Delta t}\\) で表され、電流変化を妨げる向きに生じる。",
+  64: "電流を流すコイルに蓄えられる磁気エネルギーは \\(U=\\dfrac{1}{2}LI^2\\) で表される。",
+  65: "一方のコイルの電流変化により、もう一方のコイルに誘導起電力が生じる現象を相互誘導という。",
+  66: "相互誘導を利用して交流電圧を変換する装置を変圧器（トランス）という。",
+  67: "相互インダクタンスは記号 \\(M\\) で表される。",
+  68: "相互誘導によって2次コイルに生じる起電力は、1次コイルの電流変化に比例し、\\(V=-M\\dfrac{\\Delta I_1}{\\Delta t}\\) と表される（負号は誘導起電力が電流変化を妨げる向きに生じることを示す）。",
+  69: "変圧器の電圧比は巻数比に等しく、\\(V_1:V_2=N_1:N_2\\) が成り立つ。",
+  70: "導体内部に渦を巻くように誘導される電流を渦電流（うずでんりゅう）という。電磁ブレーキやIH調理器などに利用される一方、変圧器などでは損失（渦電流損）の原因にもなる。",
+
+  71: "コイルを磁場（磁界）中で回転させると磁束が周期的に変化し、起電力は正弦関数的（sin）に変化する交流が生じる。",
+  72: "交流の瞬間値は \\(v=V_0\\sin\\omega t\\) と表される正弦波である。",
+  73: "磁束密度Bの中で角速度ωで回転する1回巻きコイル（断面積S）を貫く磁束は \\(\\Phi=BS\\cos\\omega t\\) となる。誘導起電力は \\(V=-\\dfrac{\\Delta\\Phi}{\\Delta t}=BS\\omega\\sin\\omega t\\)（初期位相0）と表される。",
+  74: "角周波数は1秒間に回転する角度を表し、\\(\\omega=2\\pi f\\) の関係がある。",
+  75: "オームの法則 \\(I=V/R\\) に \\(V=BS\\omega\\sin\\omega t\\) を代入すると、\\(I=\\dfrac{BS\\omega}{R}\\sin\\omega t\\) となる。",
+  76: "抵抗のみのR回路では、電圧と電流の位相は一致し、位相差は生じない。",
+  77: "実効値は、同じ抵抗に同じ電力を消費させる直流の電圧・電流の値として定義される。",
+  78: "実効値は最大値の \\(\\dfrac{1}{\\sqrt2}\\) 倍であり、\\(V_e=\\dfrac{V_0}{\\sqrt2}\\) と表される。",
+  79: "家庭用電源の「100V」は実効値を表しており、実際の電圧の最大値は約141Vである。",
+  80: "抵抗のみのR回路では電圧と電流が同位相なので、瞬間電力の時間平均は最大値の積の半分となり、平均消費電力は \\(P=\\dfrac{V_0I_0}{2}\\) で表される。",
+  81: "実効値は最大値の \\(1/\\sqrt2\\) 倍であるから、\\(V_e=\\dfrac{V_0}{\\sqrt2}\\)、\\(I_e=\\dfrac{I_0}{\\sqrt2}\\) となる。",
+  82: "実効値を用いると、R回路の平均消費電力は \\(P=V_eI_e\\) とシンプルに表される（最大値を用いた場合の \\(P=V_0I_0/2\\) と同等）。",
+  83: "コンデンサーやコイルが交流に対して示す抵抗のようなはたらきをリアクタンスという。",
+  84: "リアクタンスは記号Xで表される（R：抵抗、Z：インピーダンス、L：自己インダクタンスと区別する）。",
+  85: "コンデンサーの容量リアクタンスは \\(X=\\dfrac{1}{\\omega C}\\) で表され、周波数が高いほど小さくなる。",
+  86: "コンデンサーに正弦波交流電圧を加えると、電流は電圧より \\(\\pi/2\\) 進んだ \\(I=\\omega CV_0\\sin(\\omega t+\\pi/2)\\) となる。",
+  87: "コンデンサーを含むC回路では、電流の位相は電圧より \\(\\pi/2\\) 進む。",
+  88: "コイルの誘導リアクタンスは \\(X=\\omega L\\) で表され、周波数が高いほど大きくなる。",
+  89: "コイルに正弦波交流電圧を加えると、電流は電圧より \\(\\pi/2\\) 遅れた \\(I=\\dfrac{V_0}{\\omega L}\\sin(\\omega t-\\pi/2)\\) となる。",
+  90: "コイルを含むL回路では、電流の位相は電圧より \\(\\pi/2\\) 遅れる。",
+  91: "C回路では電流の位相が電圧より \\(\\pi/2\\) 進むため、電圧と電流の積の時間平均は0となり、コンデンサーは電力を消費しない。",
+  92: "L回路では電流の位相が電圧より \\(\\pi/2\\) 遅れるため、電圧と電流の積の時間平均は0となり、コイルは電力を消費しない。",
+  93: "RLC直列回路のインピーダンスは \\(Z=\\sqrt{R^2+\\left(\\omega L-\\dfrac{1}{\\omega C}\\right)^2}\\) で表される。",
+  94: "変圧器では電力（電圧×電流）がほぼ一定に保たれるため、電圧を高くすると電流は小さくなる。",
+  95: "送電線の抵抗による電力損失は電流の2乗に比例するため、電流を小さくできる高電圧送電が採用されている。",
+  96: "送電時は電力損失を減らすため昇圧し、家庭で安全に使用できるよう変電所で段階的に降圧される。",
+  97: "日本では歴史的経緯から東日本は50Hz、西日本は60Hzという異なる周波数が使われている。",
+  98: "LC回路（電気振動回路）の角周波数は \\(\\omega=\\dfrac{1}{\\sqrt{LC}}\\) で表される。",
+  99: "固有振動数は \\(f_0=\\omega/(2\\pi)\\) であるから、\\(f_0=\\dfrac{1}{2\\pi\\sqrt{LC}}\\) となる。",
+  100: "日本の家庭用電源は交流であり、実効値は100Vである（最大値は約141V）。",
+  101: "変圧器の電圧比は巻数比に等しく、\\(V_1:V_2=N_1:N_2\\) となる。",
+  102: "電力損失がない理想的な変圧器では電力が保存されるため、電流比は巻数比の逆比となり \\(I_1:I_2=N_2:N_1\\) が成り立つ。",
+  103: "イギリスの物理学者マクスウェルは、電磁気学の理論（マクスウェル方程式）から電磁波の存在を理論的に予言した。",
+  104: "ドイツの物理学者ヘルツは、実験によって電磁波の存在を確認した。",
+  105: "電磁波は電場と磁場が進行方向に垂直に振動する横波である。",
+  106: "電磁波の中で電波は最も波長が長く、γ線は最も波長が短い。",
+  107: "波長と周波数は反比例するため、波長が最も短いγ線の周波数が最も大きい。",
+  108: "光子のエネルギーは周波数に比例するため、周波数が最も大きいγ線のエネルギーが最も大きい。",
+  109: "可視光線の中で波長が最も長いのは赤色であり、波長が最も短いのは紫色である。",
+  110: "赤外線は物体を温める温熱効果があり、暖房器具やリモコンなどに利用される。",
+  111: "紫外線は可視光線より波長が短く、殺菌作用や日焼け、分子の結合を切る作用がある。",
+  112: "X線は透過性が強く、レントゲン撮影など医療診断に利用される。",
+  113: "γ線は電磁波の中で最も波長が短くエネルギーが高いため透過性が特に強く、非破壊検査やがんの治療に利用される。",
+  114: "不純物を添加して伝導電子（負電荷）が多数キャリアとなる半導体をn型半導体という。",
+  115: "不純物を添加して正孔（正電荷のようにふるまうもの）が多数キャリアとなる半導体をp型半導体という。",
+  116: "p型半導体において、価電子が抜けた場所にできる、電子が不足した状態を正孔（ホール）といい、正の電荷のようにふるまう。",
+  117: "n型半導体とp型半導体を1つずつ組み合わせた素子をダイオードという。",
+  118: "ダイオードが一方向にのみ電流を流す作用を整流作用という。",
+  119: "トランジスタが微小な電流・電圧の変化を大きな変化として取り出す作用を増幅作用という。"
+
+};
+
+// ============================================================
+// 状態管理
+// ============================================================
+let curSec    = 1;
+let curMode   = 'intro';   // 'intro' | 'study' | 'submit'
+let orderMode = 'seq';     // 自習モードの出題順　'seq'=学習順  'rand'=ランダム
+
+const im = {          // 初学モード状態
+  secId : null,
+  idx   : 0
+};
+
+const ss = {           // 自習モード状態
+  secId    : null,
+  qs       : [],
+  idx      : 0,
+  answered : false,
+  correct  : 0,
+  wrong    : 0,
+  chosen   : []
+};
+
+const sm = {           // 送信モード状態
+  secId   : null,
+  num     : '',
+  name    : '',
+  started : false,
+  idx     : 0,
+  answered: false,
+  answers : {},
+  chosen  : []
+};
+
+// ============================================================
+// ユーティリティ
+// ============================================================
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function doMath(el) {
+  if (window.renderMathInElement) {
+    renderMathInElement(el, {
+      delimiters: [
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true  }
+      ],
+      throwOnError: false
+    });
+  }
+}
+
+// ============================================================
+// タブ・モード
+// ============================================================
+function buildTabs() {
+  document.getElementById('tabs').innerHTML = SECTIONS.map(s => `
+    <div class="tab ${s.id === curSec ? 'active' : ''} ${!s.available ? 'disabled' : ''}"
+         onclick="${s.available ? `setSec(${s.id})` : ''}">
+      ${s.label}
+    </div>
+  `).join('');
+}
+
+function setSec(id) {
+  curSec      = id;
+  im.secId    = null;  // セクション変更→各モードの状態をリセット
+  ss.secId    = null;
+  sm.started  = false;
+  buildTabs();
+  render();
+}
+
+function setMode(mode) {
+  curMode = mode;
+  document.getElementById('modeIntro' ).classList.toggle('active', mode === 'intro' );
+  document.getElementById('modeStudy' ).classList.toggle('active', mode === 'study' );
+  document.getElementById('modeSubmit').classList.toggle('active', mode === 'submit');
+  render();
+}
+
+// ============================================================
+// メインレンダー
+// ============================================================
+function render() {
+  const sec = SECTIONS.find(s => s.id === curSec);
+  document.getElementById('hdrSub').textContent = sec.subtitle || '';
+
+  if (!sec.available) {
+    document.getElementById('content').innerHTML = `
+      <div class="coming-card">
+        <div class="coming-icon">🔧</div>
+        <div class="coming-title">準備中</div>
+        <div class="coming-text">${sec.label} は現在準備中です。</div>
+      </div>`;
+    return;
+  }
+
+  if      (curMode === 'intro')  renderIntro(sec);
+  else if (curMode === 'study')  renderStudy(sec);
+  else                            renderSubmit(sec);
+}
+
+// ============================================================
+// 初学モード：選択肢なし、解答・解説をはじめから表示
+// ============================================================
+function renderIntro(sec) {
+  if (im.secId !== sec.id) {
+    im.secId = sec.id;
+    im.idx   = 0;
+  }
+  if (im.idx >= sec.questions.length) {
+    renderIntroDone(sec);
+    return;
+  }
+
+  const q     = sec.questions[im.idx];
+  const total = sec.questions.length;
+  const pct   = Math.round((im.idx / total) * 100);
+  const expl  = EXPLANATIONS[q.id] || '';
+
+  const el = document.getElementById('content');
+  el.innerHTML = `
+    <div class="prog-row">
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <div class="prog-text">${im.idx + 1} / ${total}</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">問 ${q.id}</div>
+      ${q.image ? `<img class="q-img" src="${q.image}" alt="図${q.id}">` : ''}
+      <div class="q-text">${q.text}</div>
+    </div>
+
+    <div class="intro-answer">
+      <div class="intro-answer-label">✅ 解答</div>
+      <div class="intro-answer-text">${q.choices[0]}</div>
+      <div class="intro-expl"><span class="intro-expl-icon">💡</span>${expl}</div>
+    </div>
+
+    <button class="next-btn" onclick="nextIntroQ()">
+      ${im.idx + 1 < total ? '次の問題 →' : '✅ セクション修了 →'}
+    </button>
+  `;
+
+  doMath(el);
+}
+
+function nextIntroQ() {
+  im.idx++;
+  renderIntro(SECTIONS.find(s => s.id === curSec));
+}
+
+function renderIntroDone(sec) {
+  document.getElementById('content').innerHTML = `
+    <div class="done-card">
+      <div class="done-icon">🎓</div>
+      <div class="done-title">${sec.label}（${sec.subtitle}）の学習が終わりました</div>
+      <div class="done-sub">全 ${sec.questions.length} 問を確認しました。次は自習モードで理解度を確かめましょう。</div>
+      <div class="done-actions">
+        <button class="next-btn" onclick="restartIntro()">🔄 もう一度読み直す</button>
+        <button class="next-btn" style="background:#059669;" onclick="setMode('study')">📖 自習モードへ進む</button>
+      </div>
+    </div>`;
+}
+
+function restartIntro() {
+  im.idx = 0;
+  renderIntro(SECTIONS.find(s => s.id === curSec));
+}
+
+// ============================================================
+// 自習モード（4択・即時採点）
+// ============================================================
+function setOrderMode(mode) {
+  orderMode   = mode;
+  ss.secId    = null; // 切替時に出題をリセット
+  ss.chosen   = [];
+  render();
+}
+
+function startStudy(sec) {
+  ss.secId    = sec.id;
+  ss.qs       = orderMode === 'rand'
+                  ? shuffle(sec.questions)
+                  : [...sec.questions]; // 学習順：Q1から順番
+  ss.idx      = 0;
+  ss.answered = false;
+  ss.correct  = 0;
+  ss.wrong    = 0;
+  ss.chosen   = [];
+  renderStudy(sec);
+}
+
+function renderStudy(sec) {
+  if (ss.secId !== sec.id || ss.qs.length === 0) {
+    startStudy(sec);
+    return;
+  }
+  if (ss.idx >= ss.qs.length) {
+    renderResult(sec);
+    return;
+  }
+
+  const q     = ss.qs[ss.idx];
+  const total = ss.qs.length;
+  const pct   = Math.round((ss.idx / total) * 100);
+
+  if (ss.chosen.length === 0) {
+    ss.chosen = shuffle(q.choices.map((_, i) => i));
+  }
+
+  const el = document.getElementById('content');
+  el.innerHTML = `
+    <div class="order-row">
+      <span class="order-label">出題順：</span>
+      <button class="order-btn ${orderMode === 'seq'  ? 'active' : ''}"
+              onclick="setOrderMode('seq')">学習順</button>
+      <button class="order-btn ${orderMode === 'rand' ? 'active' : ''}"
+              onclick="setOrderMode('rand')">ランダム</button>
+    </div>
+    <div class="prog-row">
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <div class="prog-text">${ss.idx + 1} / ${total}</div>
+    </div>
+    <div class="score-row" id="scoreRow">✅ ${ss.correct} &nbsp;❌ ${ss.wrong}</div>
+
+    <div class="q-card">
+      <div class="q-num">問 ${q.id}</div>
+      ${q.image ? `<img class="q-img" src="${q.image}" alt="図${q.id}">` : ''}
+      <div class="q-text">${q.text}</div>
+    </div>
+
+    <div class="choices" id="clist">
+      ${ss.chosen.map((ci, pos) => `
+        <button class="choice-btn" id="cb${pos}" onclick="pick(${pos})"
+                ${ss.answered ? 'disabled' : ''}>
+          ${q.choices[ci]}
+        </button>`).join('')}
+    </div>
+
+    <div class="feedback" id="fb"></div>
+
+    <button class="next-btn" id="nb" onclick="nextQ()" style="display:none;">
+      ${ss.idx + 1 < total ? '次の問題 →' : '結果を見る →'}
+    </button>
+  `;
+
+  doMath(el);
+}
+
+function pick(pos) {
+  if (ss.answered) return;
+  ss.answered = true;
+
+  const q         = ss.qs[ss.idx];
+  const isCorrect = ss.chosen[pos] === 0;
+
+  if (isCorrect) ss.correct++;
+  else           ss.wrong++;
+
+  ss.chosen.forEach((ci, p) => {
+    const btn = document.getElementById(`cb${p}`);
+    if (!btn) return;
+    btn.disabled = true;
+    if (ci === 0)       btn.classList.add('correct');
+    else if (p === pos) btn.classList.add('wrong');
+  });
+
+  const fb   = document.getElementById('fb');
+  const expl = EXPLANATIONS[q.id] || '';
+  if (isCorrect) {
+    fb.className = 'feedback ok';
+    fb.innerHTML = `✅ 正解です！${expl ? `<br><span class="fb-expl">💡 ${expl}</span>` : ''}`;
+  } else {
+    fb.className = 'feedback ng';
+    fb.innerHTML = `❌ 不正解。正解は「${q.choices[0]}」です。${expl ? `<br><span class="fb-expl">💡 ${expl}</span>` : ''}`;
+  }
+  doMath(fb);
+
+  document.getElementById('scoreRow').innerHTML = `✅ ${ss.correct} &nbsp;❌ ${ss.wrong}`;
+  document.getElementById('nb').style.display = 'block';
+}
+
+function nextQ() {
+  ss.idx++;
+  ss.answered = false;
+  ss.chosen   = [];
+  renderStudy(SECTIONS.find(s => s.id === curSec));
+}
+
+function renderResult(sec) {
+  const total = ss.qs.length;
+  const c     = ss.correct;
+  const pct   = Math.round((c / total) * 100);
+  const emoji = pct >= 90 ? '🎉' : pct >= 70 ? '👍' : pct >= 50 ? '🤔' : '😢';
+
+  document.getElementById('content').innerHTML = `
+    <div class="result-card">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-score">${c}</div>
+      <div class="result-total">/ ${total} 問正解</div>
+      <div class="result-pct">正答率 ${pct}%</div>
+      <div class="result-actions">
+        <button class="retry-btn"
+                onclick="startStudy(SECTIONS.find(s=>s.id===${curSec}))">
+          🔄 もう一度やり直す
+        </button>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// 送信モード
+// ============================================================
+function renderSubmit(sec) {
+  if (sm.secId !== sec.id || !sm.started) {
+    renderSubmitIntro(sec);
+    return;
+  }
+  if (sm.idx >= sec.questions.length) {
+    renderSubmitFinal(sec);
+    return;
+  }
+  renderSubmitQuestion(sec);
+}
+
+/* ── 氏名入力画面 ── */
+function renderSubmitIntro(sec) {
+  document.getElementById('content').innerHTML = `
+    <div class="name-card">
+      <label class="name-label" for="snum">組番号を入力してください</label>
+      <input type="text" class="name-input" id="snum"
+             placeholder="例：A01～E40"
+             value="${sm.secId === sec.id ? sm.num : ''}">
+    </div>
+    <div class="name-card">
+      <label class="name-label" for="sname">氏名を入力してください</label>
+      <input type="text" class="name-input" id="sname"
+             placeholder="例：湘南 太郎"
+             value="${sm.secId === sec.id ? sm.name : ''}">
+    </div>
+    <button class="sm-start-btn" onclick="startSubmitQuiz(${sec.id})">
+      ✏️ 回答を開始する（全 ${sec.questions.length} 問）
+    </button>`;
+}
+
+function startSubmitQuiz(secId) {
+  const num  = document.getElementById('snum').value.trim();
+  const name = document.getElementById('sname').value.trim();
+  if (!num)  { alert('組番号を入力してください。'); return; }
+  if (!name) { alert('氏名を入力してください。');   return; }
+  sm.secId    = secId;
+  sm.num      = num;
+  sm.name     = name;
+  sm.started  = true;
+  sm.idx      = 0;
+  sm.answered = false;
+  sm.answers  = {};
+  sm.chosen   = [];
+  renderSubmit(SECTIONS.find(s => s.id === secId));
+}
+
+/* ── 一問表示 ── */
+function renderSubmitQuestion(sec) {
+  const q     = sec.questions[sm.idx];
+  const total = sec.questions.length;
+  const pct   = Math.round((sm.idx / total) * 100);
+
+  if (sm.chosen.length === 0) {
+    sm.chosen = shuffle(q.choices.map((_, i) => i));
+  }
+
+  const expl       = EXPLANATIONS[q.id] || '';
+  const selectedCi = sm.answers[q.id];
+
+  const el = document.getElementById('content');
+  el.innerHTML = `
+    <div class="prog-row">
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <div class="prog-text">${sm.idx + 1} / ${total}</div>
+    </div>
+
+    <div class="q-card">
+      <div class="q-num">問 ${q.id}</div>
+      ${q.image ? `<img class="q-img" src="${q.image}" alt="図${q.id}">` : ''}
+      <div class="q-text">${q.text}</div>
+    </div>
+
+    <div class="choices">
+      ${sm.chosen.map((ci, pos) => {
+        let cls = '';
+        if (sm.answered) {
+          if (ci === 0)                           cls = 'correct';
+          else if (ci === selectedCi && ci !== 0) cls = 'wrong';
+        }
+        return `
+          <button class="choice-btn ${cls}" id="smcb${pos}"
+                  onclick="pickSubmit(${pos})"
+                  ${sm.answered ? 'disabled' : ''}>
+            ${q.choices[ci]}
+          </button>`;
+      }).join('')}
+    </div>
+
+    ${sm.answered ? `
+      <div class="sm-explanation">
+        <span class="sm-expl-icon">💡</span>
+        <span>${expl}</span>
+      </div>
+      <button class="next-btn" onclick="nextSubmitQ()">
+        ${sm.idx + 1 < total ? '次の問題 →' : '✅ 送信画面へ →'}
+      </button>
+    ` : ''}
+  `;
+
+  doMath(el);
+}
+
+function pickSubmit(pos) {
+  if (sm.answered) return;
+  sm.answered = true;
+  const sec = SECTIONS.find(s => s.id === sm.secId);
+  const q   = sec.questions[sm.idx];
+  sm.answers[q.id] = sm.chosen[pos];
+  renderSubmitQuestion(sec);
+}
+
+function nextSubmitQ() {
+  sm.idx++;
+  sm.answered = false;
+  sm.chosen   = [];
+  renderSubmit(SECTIONS.find(s => s.id === sm.secId));
+}
+
+/* ── 送信確認画面 ── */
+function renderSubmitFinal(sec) {
+  document.getElementById('content').innerHTML = `
+    <div class="sm-final-card">
+      <div class="sm-final-icon">📝</div>
+      <div class="sm-final-title">全 ${sec.questions.length} 問の回答が完了しました</div>
+      <div class="sm-final-name">${sm.name} さん</div>
+      <button class="submit-btn" id="sbtn" onclick="doSubmit(${sec.id})">
+        📤 回答を送信する
+      </button>
+      <div id="sresult"></div>
+    </div>`;
+}
+
+// ★★★ 記録送信先のGAS URLは未定：デプロイ後にここへ設定してください ★★★
+// 例）const GAS_URL = 'https://script.google.com/macros/s/xxxxx/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbx4Rt01y6kpAXCj5yNfaJ6NCBcSFEpPUvcaq54oMPmRqHooqUwn1hRxLHAbVVpK10MUMg/exec';
+
+let _gasParams = null;
+let _gasMeta   = null;
+
+function doSubmit(secId) {
+  const sec = SECTIONS.find(s => s.id === secId);
+  let correct = 0;
+  sec.questions.forEach(q => { if (sm.answers[q.id] === 0) correct++; });
+
+  _gasMeta = {
+    num: sm.num, name: sm.name,
+    correct, total: sec.questions.length
+  };
+
+  // GAS URL が未設定の場合は送信せずメッセージのみ表示
+  if (!GAS_URL) {
+    document.getElementById('sresult').innerHTML = `
+      <div class="sub-result warn">
+        ⚠️ 送信先が未設定です。<br>
+        <strong>${sm.num}　${sm.name}</strong> さんの得点：<strong>${correct} / ${sec.questions.length}</strong><br>
+        GAS URL の設定後に送信できるようになります。
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+        <button class="next-btn" onclick="setMode('study')">📖 自習モードで学習する</button>
+      </div>`;
+    return;
+  }
+
+  _gasParams = new URLSearchParams({
+    num      : sm.num,
+    name     : sm.name,
+    section  : sec.label,
+    correct  : String(correct),
+    total    : String(sec.questions.length),
+    qids     : sec.questions.map(q => q.id).join(','),
+    timestamp: new Date().toLocaleString('ja-JP')
+  });
+
+  sec.questions.forEach(q => {
+    _gasParams.append('q' + q.id, sm.answers[q.id] === 0 ? '○' : '×');
+  });
+
+  const btn = document.getElementById('sbtn');
+  btn.disabled    = true;
+  btn.textContent = '📤 送信中…';
+
+  trySend(btn, 1);
+}
+
+async function trySend(btn, attempt) {
+  const MAX_RETRY = 3;
+  try {
+    if (btn) {
+      btn.textContent = attempt === 1
+        ? '📤 送信中…'
+        : `🔄 再送信中… (${attempt}/${MAX_RETRY})`;
+    }
+
+    await fetch(`${GAS_URL}?${_gasParams}`, { method: 'GET', mode: 'no-cors' });
+
+    const { num, name, correct, total } = _gasMeta;
+    document.getElementById('sresult').innerHTML = `
+      <div class="sub-result ok">
+        ✅ 送信完了しました。お疲れ様でした！<br>
+        <strong>${num}　${name}</strong> さんの得点：<strong>${correct} / ${total}</strong>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+        <button class="next-btn" onclick="setMode('study')">
+          📖 自習モードで学習する
+        </button>
+        <button class="next-btn"
+                style="background:#059669;"
+                onclick="sm.started=false; setMode('submit')">
+          📤 送信モードでもう一度
+        </button>
+      </div>`;
+
+  } catch (e) {
+    if (attempt < MAX_RETRY) {
+      await new Promise(r => setTimeout(r, 2000));
+      await trySend(btn, attempt + 1);
+    } else {
+      const { num, name, correct, total } = _gasMeta;
+      document.getElementById('sresult').innerHTML = `
+        <div class="sub-result warn">
+          ❌ 送信に失敗しました。ネットワークを確認してもう一度お試しください。<br>
+          <strong>${num}　${name}</strong> さんの得点：<strong>${correct} / ${total}</strong>
+        </div>`;
+      if (btn) { btn.disabled = false; btn.textContent = '📤 もう一度送信する'; }
+    }
+  }
+}
+
+// ============================================================
+// 初期化
+// ============================================================
+document.addEventListener('DOMContentLoaded', () => {
+  buildTabs();
+  document.getElementById('modeIntro').classList.add('active');
+  render();
+});
+</script>
+</body>
+</html>
